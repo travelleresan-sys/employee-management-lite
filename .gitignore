@@ -1,0 +1,43 @@
+# 機密情報
+.env
+config.json
+*.key
+*.pem
+*.crt
+*.sqlite
+*.pdf
+
+# Python関連
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# データベース
+instance/*.db
+instance/*.db-journal
+
+# 仮想環境
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# テスト・デバッグファイル
+test_*.py
+debug_*.py
+check_*.py
+*_response_*.html
+*_headers.txt
+*cookies*.txt
