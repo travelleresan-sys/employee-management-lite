@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}企業編集 - Employee Management Lite{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-pencil me-2"></i>企業編集</h2>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('saas_edit_company', company_id=company.id) }}">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-building me-2"></i>企業情報</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="company_code" class="form-label">企業コード</label>
+                                <input type="text" class="form-control" id="company_code" name="company_code"
+                                       value="{{ company.company_code }}" readonly>
+                                <small class="text-muted">企業コードは変更できません</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="company_name" class="form-label">企業名 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="company_name" name="company_name"
+                                       value="{{ company.company_name }}" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="{{ company.email or '' }}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">電話番号</label>
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                       value="{{ company.phone or '' }}">
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="address" class="form-label">住所</label>
+                                <textarea class="form-control" id="address" name="address" rows="2">{{ company.address or '' }}</textarea>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active"
+                                           {% if company.is_active %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_active">
+                                        アクティブ（無効化すると全ユーザーがログインできなくなります）
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mb-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>更新
+                    </button>
+                    <a href="{{ url_for('saas_companies') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>戻る
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- 契約情報 -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-file-text me-2"></i>契約情報</h6>
+                    </div>
+                    <div class="card-body">
+                        {% if company.active_contract %}
+                        <div class="mb-2">
+                            <strong>プラン:</strong> {{ company.active_contract.plan.display_name }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>従業員上限:</strong> {{ company.active_contract.plan.max_employees }}名
+                        </div>
+                        <div class="mb-2">
+                            <strong>契約期間:</strong><br>
+                            {{ company.active_contract.start_date.strftime('%Y-%m-%d') }} 〜
+                            {{ company.active_contract.end_date.strftime('%Y-%m-%d') }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>月額料金:</strong> ¥{{ "{:,}".format(company.active_contract.monthly_fee) }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>課金サイクル:</strong>
+                            {{ '月次' if company.active_contract.billing_cycle == 'monthly' else '年次' }}
+                        </div>
+                        {% else %}
+                        <p class="text-muted mb-0">有効な契約がありません</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- 統計情報 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>統計情報</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>従業員数:</strong>
+                            {{ company.employees.filter_by(status='在籍中').count() }}名
+                        </div>
+                        <div class="mb-2">
+                            <strong>管理者数:</strong>
+                            {{ company.users.filter_by(role='company_admin').count() }}名
+                        </div>
+                        <div class="mb-2">
+                            <strong>登録日:</strong>
+                            {{ company.created_at.strftime('%Y-%m-%d') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

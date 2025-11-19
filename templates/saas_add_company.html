@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}新規企業登録 - Employee Management Lite{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-plus-circle me-2"></i>新規企業登録</h2>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('saas_add_company') }}">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- 企業情報 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-building me-2"></i>企業情報</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="company_code" class="form-label">企業コード <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="company_code" name="company_code"
+                                       placeholder="例: COMP001" required>
+                                <small class="text-muted">一意の企業識別コード</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="company_name" class="form-label">企業名 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="company_name" name="company_name"
+                                       placeholder="例: 株式会社サンプル" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       placeholder="company@example.com">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">電話番号</label>
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                       placeholder="03-1234-5678">
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="address" class="form-label">住所</label>
+                                <textarea class="form-control" id="address" name="address" rows="2"
+                                          placeholder="東京都..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 管理者情報 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>管理者情報</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="admin_name" class="form-label">管理者名 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="admin_name" name="admin_name"
+                                       placeholder="山田 太郎" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="admin_email" class="form-label">管理者メールアドレス <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="admin_email" name="admin_email"
+                                       placeholder="admin@example.com" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="admin_password" class="form-label">初期パスワード <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="admin_password" name="admin_password"
+                                       minlength="8" required>
+                                <small class="text-muted">8文字以上</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 契約情報 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-file-text me-2"></i>契約情報</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="plan_id" class="form-label">プラン <span class="text-danger">*</span></label>
+                                <select class="form-select" id="plan_id" name="plan_id" required>
+                                    <option value="">プランを選択...</option>
+                                    {% for plan in plans %}
+                                    <option value="{{ plan.id }}">
+                                        {{ plan.display_name }} - {{ plan.max_employees }}名まで
+                                        (¥{{ "{:,}".format(plan.monthly_fee) }}/月)
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="billing_cycle" class="form-label">課金サイクル <span class="text-danger">*</span></label>
+                                <select class="form-select" id="billing_cycle" name="billing_cycle" required>
+                                    <option value="monthly">月次</option>
+                                    <option value="yearly">年次</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="start_date" class="form-label">契約開始日 <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="start_date" name="start_date"
+                                       value="{{ today }}" required>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            契約終了日は課金サイクルに基づき自動計算されます（月次: 30日後、年次: 365日後）
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mb-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>登録
+                    </button>
+                    <a href="{{ url_for('saas_companies') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>キャンセル
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6><i class="bi bi-lightbulb me-2"></i>登録のヒント</h6>
+                        <ul class="small mb-0">
+                            <li>企業コードは後から変更できません</li>
+                            <li>管理者アカウントは企業の責任者に付与されます</li>
+                            <li>初期パスワードは必ず企業管理者に伝えてください</li>
+                            <li>契約開始後、企業管理者は従業員の登録が可能になります</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

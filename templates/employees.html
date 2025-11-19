@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}従業員一覧 - Employee Management Lite{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-people me-2"></i>従業員一覧</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('add_employee') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>従業員登録
+            </a>
+        </div>
+    </div>
+
+    <!-- デスクトップ用テーブル -->
+    <div class="card table-card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>従業員番号</th>
+                            <th>氏名</th>
+                            <th>フリガナ</th>
+                            <th>部署</th>
+                            <th>役職</th>
+                            <th>雇用形態</th>
+                            <th>入社日</th>
+                            <th>ステータス</th>
+                            <th>アクション</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if employees %}
+                            {% for employee in employees %}
+                            <tr>
+                                <td>{{ employee.employee_id or '-' }}</td>
+                                <td><strong>{{ employee.name }}</strong></td>
+                                <td>{{ employee.furigana or '-' }}</td>
+                                <td>{{ employee.department or '-' }}</td>
+                                <td>{{ employee.position or '-' }}</td>
+                                <td>{{ employee.employment_type or '-' }}</td>
+                                <td>{{ employee.join_date.strftime('%Y-%m-%d') if employee.join_date else '-' }}</td>
+                                <td>
+                                    {% if employee.status == '在籍中' %}
+                                    <span class="badge bg-success">在籍中</span>
+                                    {% elif employee.status == '休職中' %}
+                                    <span class="badge bg-warning text-dark">休職中</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ employee.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('edit_employee', employee_id=employee.id) }}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    登録された従業員がいません
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- モバイル用カード -->
+    <div class="mobile-card">
+        {% if employees %}
+            {% for employee in employees %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="card-title mb-1">{{ employee.name }}</h5>
+                            <small class="text-muted">{{ employee.furigana or '' }}</small>
+                        </div>
+                        {% if employee.status == '在籍中' %}
+                        <span class="badge bg-success">在籍中</span>
+                        {% elif employee.status == '休職中' %}
+                        <span class="badge bg-warning text-dark">休職中</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ employee.status }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-2">
+                        {% if employee.employee_id %}
+                        <small class="d-block">
+                            <i class="bi bi-hash me-1"></i>{{ employee.employee_id }}
+                        </small>
+                        {% endif %}
+                        {% if employee.department %}
+                        <small class="d-block">
+                            <i class="bi bi-building me-1"></i>{{ employee.department }}
+                            {% if employee.position %} - {{ employee.position }}{% endif %}
+                        </small>
+                        {% endif %}
+                        {% if employee.employment_type %}
+                        <small class="d-block">
+                            <i class="bi bi-briefcase me-1"></i>{{ employee.employment_type }}
+                        </small>
+                        {% endif %}
+                        {% if employee.join_date %}
+                        <small class="d-block">
+                            <i class="bi bi-calendar-check me-1"></i>入社: {{ employee.join_date.strftime('%Y-%m-%d') }}
+                        </small>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid">
+                        <a href="{{ url_for('edit_employee', employee_id=employee.id) }}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil me-1"></i>編集
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card">
+                <div class="card-body text-center text-muted py-4">
+                    登録された従業員がいません
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

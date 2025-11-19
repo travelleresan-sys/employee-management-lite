@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}従業員登録 - Employee Management Lite{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-plus-circle me-2"></i>従業員登録</h2>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('add_employee') }}">
+        <div class="row">
+            <div class="col-lg-9">
+                <!-- 基本情報 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-person me-2"></i>基本情報</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="employee_id" class="form-label">従業員番号</label>
+                                <input type="text" class="form-control" id="employee_id" name="employee_id"
+                                       placeholder="例: EMP001">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">氏名 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                       placeholder="例: 山田 太郎" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="furigana" class="form-label">フリガナ</label>
+                                <input type="text" class="form-control" id="furigana" name="furigana"
+                                       placeholder="例: ヤマダ タロウ">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       placeholder="yamada@example.com">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">電話番号</label>
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                       placeholder="080-1234-5678">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="birth_date" class="form-label">生年月日</label>
+                                <input type="date" class="form-control" id="birth_date" name="birth_date">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="gender" class="form-label">性別</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="">選択してください</option>
+                                    <option value="男性">男性</option>
+                                    <option value="女性">女性</option>
+                                    <option value="その他">その他</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="address" class="form-label">住所</label>
+                                <textarea class="form-control" id="address" name="address" rows="2"
+                                          placeholder="東京都..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 雇用情報 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-briefcase me-2"></i>雇用情報</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="join_date" class="form-label">入社日</label>
+                                <input type="date" class="form-control" id="join_date" name="join_date">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="department" class="form-label">部署</label>
+                                <input type="text" class="form-control" id="department" name="department"
+                                       placeholder="例: 営業部">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="position" class="form-label">役職</label>
+                                <input type="text" class="form-control" id="position" name="position"
+                                       placeholder="例: 課長">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="employment_type" class="form-label">雇用形態</label>
+                                <select class="form-select" id="employment_type" name="employment_type">
+                                    <option value="">選択してください</option>
+                                    <option value="正社員">正社員</option>
+                                    <option value="契約社員">契約社員</option>
+                                    <option value="派遣社員">派遣社員</option>
+                                    <option value="パート">パート</option>
+                                    <option value="アルバイト">アルバイト</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 給与情報 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-cash me-2"></i>給与情報</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="wage_type" class="form-label">給与形態</label>
+                                <select class="form-select" id="wage_type" name="wage_type">
+                                    <option value="">選択してください</option>
+                                    <option value="monthly">月給</option>
+                                    <option value="daily">日給</option>
+                                    <option value="hourly">時給</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="base_wage" class="form-label">基本給（円）</label>
+                                <input type="number" class="form-control" id="base_wage" name="base_wage"
+                                       min="0" value="0">
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="transportation_allowance" class="form-label">交通費（円）</label>
+                                <input type="number" class="form-control" id="transportation_allowance" name="transportation_allowance"
+                                       min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 勤怠設定 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-clock me-2"></i>勤怠設定</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="working_time_system" class="form-label">労働時間制</label>
+                                <select class="form-select" id="working_time_system" name="working_time_system">
+                                    <option value="standard">標準労働時間制</option>
+                                    <option value="flex">フレックスタイム制</option>
+                                    <option value="discretionary">裁量労働制</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="standard_working_hours" class="form-label">所定労働時間（時間/日）</label>
+                                <input type="number" class="form-control" id="standard_working_hours" name="standard_working_hours"
+                                       min="0" step="0.5" value="8.0">
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="standard_working_days" class="form-label">所定労働日数（日/週）</label>
+                                <input type="number" class="form-control" id="standard_working_days" name="standard_working_days"
+                                       min="1" max="7" value="5">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mb-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>登録
+                    </button>
+                    <a href="{{ url_for('employees') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>キャンセル
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="card bg-light sticky-top" style="top: 1rem;">
+                    <div class="card-body">
+                        <h6><i class="bi bi-info-circle me-2"></i>入力のヒント</h6>
+                        <ul class="small mb-0">
+                            <li>氏名のみ必須項目です</li>
+                            <li>従業員番号は任意ですが、社内で統一した形式の使用を推奨します</li>
+                            <li>給与情報は給与計算に使用されます</li>
+                            <li>勤怠設定は労働時間の記録・計算に使用されます</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}企業ダッシュボード - Employee Management Lite{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2 me-2"></i>企業ダッシュボード</h2>
+            <p class="text-muted">{{ current_user.company.company_name }}</p>
+        </div>
+    </div>
+
+    <!-- 統計カード -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">在籍従業員数</p>
+                            <h3 class="mb-0">{{ total_employees }}</h3>
+                            {% if contract %}
+                            <small class="text-muted">上限: {{ contract.plan.max_employees }}名</small>
+                            {% endif %}
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">今月の勤怠記録</p>
+                            <h3 class="mb-0">{{ records_count }}</h3>
+                            <small class="text-muted">件</small>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-clock text-success" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">契約プラン</p>
+                            <h3 class="mb-0">
+                                {% if contract %}
+                                {{ contract.plan.display_name }}
+                                {% else %}
+                                <span class="text-danger">未契約</span>
+                                {% endif %}
+                            </h3>
+                            {% if contract %}
+                            <small class="text-muted">期限: {{ contract.end_date.strftime('%Y-%m-%d') }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="bg-info bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-card-list text-info" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 機能メニュー -->
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-primary">
+                <div class="card-header bg-primary bg-opacity-10">
+                    <h5 class="card-title mb-0 text-primary">
+                        <i class="bi bi-people me-1"></i>従業員管理
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">従業員情報の登録・編集・閲覧</p>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="{{ url_for('employees') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-list-ul me-1"></i>従業員一覧
+                        </a>
+                        <a href="{{ url_for('add_employee') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-plus-circle me-1"></i>従業員登録
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-success">
+                <div class="card-header bg-success bg-opacity-10">
+                    <h5 class="card-title mb-0 text-success">
+                        <i class="bi bi-clock me-1"></i>勤怠管理
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">労働時間の記録・集計・確認</p>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="#" class="btn btn-outline-success btn-sm disabled">
+                            <i class="bi bi-pencil me-1"></i>勤怠入力
+                        </a>
+                        <a href="#" class="btn btn-outline-success btn-sm disabled">
+                            <i class="bi bi-calendar-check me-1"></i>勤怠一覧
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-warning">
+                <div class="card-header bg-warning bg-opacity-10">
+                    <h5 class="card-title mb-0 text-warning">
+                        <i class="bi bi-calculator me-1"></i>給与管理
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">給与計算・明細発行</p>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="#" class="btn btn-outline-warning btn-sm disabled">
+                            <i class="bi bi-calculator me-1"></i>給与計算
+                        </a>
+                        <a href="#" class="btn btn-outline-warning btn-sm disabled">
+                            <i class="bi bi-file-text me-1"></i>給与明細
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-info">
+                <div class="card-header bg-info bg-opacity-10">
+                    <h5 class="card-title mb-0 text-info">
+                        <i class="bi bi-calendar-heart me-1"></i>休暇管理
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">有給休暇の付与・使用管理</p>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="#" class="btn btn-outline-info btn-sm disabled">
+                            <i class="bi bi-plus-circle me-1"></i>有給付与
+                        </a>
+                        <a href="#" class="btn btn-outline-info btn-sm disabled">
+                            <i class="bi bi-list-check me-1"></i>休暇一覧
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if contract and (contract.end_date - contract.end_date.today()).days <= 30 %}
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>契約期限のお知らせ</strong>
+                <p class="mb-0">ご契約の有効期限が {{ contract.end_date.strftime('%Y年%m月%d日') }} までとなっております。継続利用をご希望の場合は、更新のお手続きをお願いいたします。</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

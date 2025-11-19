@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}企業管理 - Employee Management Lite{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-building me-2"></i>企業管理</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('saas_add_company') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>新規企業登録
+            </a>
+        </div>
+    </div>
+
+    <!-- デスクトップ用テーブル -->
+    <div class="card table-card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>企業コード</th>
+                            <th>企業名</th>
+                            <th>メールアドレス</th>
+                            <th>電話番号</th>
+                            <th>契約プラン</th>
+                            <th>契約期限</th>
+                            <th>ステータス</th>
+                            <th>アクション</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if companies %}
+                            {% for company in companies %}
+                            <tr>
+                                <td>{{ company.company_code }}</td>
+                                <td>{{ company.company_name }}</td>
+                                <td>{{ company.email or '-' }}</td>
+                                <td>{{ company.phone or '-' }}</td>
+                                <td>
+                                    {% if company.active_contract %}
+                                    {{ company.active_contract.plan.display_name }}
+                                    {% else %}
+                                    <span class="text-muted">未契約</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if company.active_contract %}
+                                    {{ company.active_contract.end_date.strftime('%Y-%m-%d') }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if company.is_active %}
+                                    <span class="badge bg-success">アクティブ</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">停止中</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('saas_edit_company', company_id=company.id) }}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    登録された企業がありません
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- モバイル用カード -->
+    <div class="mobile-card">
+        {% if companies %}
+            {% for company in companies %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ company.company_name }}</h5>
+                        {% if company.is_active %}
+                        <span class="badge bg-success">アクティブ</span>
+                        {% else %}
+                        <span class="badge bg-secondary">停止中</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-2">
+                        <small class="text-muted d-block">
+                            <i class="bi bi-hash me-1"></i>{{ company.company_code }}
+                        </small>
+                        {% if company.email %}
+                        <small class="text-muted d-block">
+                            <i class="bi bi-envelope me-1"></i>{{ company.email }}
+                        </small>
+                        {% endif %}
+                        {% if company.phone %}
+                        <small class="text-muted d-block">
+                            <i class="bi bi-telephone me-1"></i>{{ company.phone }}
+                        </small>
+                        {% endif %}
+                    </div>
+
+                    {% if company.active_contract %}
+                    <div class="mb-2">
+                        <small class="d-block">
+                            <strong>プラン:</strong> {{ company.active_contract.plan.display_name }}
+                        </small>
+                        <small class="d-block">
+                            <strong>期限:</strong> {{ company.active_contract.end_date.strftime('%Y-%m-%d') }}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid">
+                        <a href="{{ url_for('saas_edit_company', company_id=company.id) }}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil me-1"></i>編集
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card">
+                <div class="card-body text-center text-muted py-4">
+                    登録された企業がありません
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}SaaS管理者ダッシュボード - Employee Management Lite{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2 me-2"></i>SaaS管理者ダッシュボード</h2>
+        </div>
+    </div>
+
+    <!-- 統計カード -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">アクティブ企業</p>
+                            <h3 class="mb-0">{{ total_companies }}</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-building text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">有効契約数</p>
+                            <h3 class="mb-0">{{ active_contracts }}</h3>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-file-text text-success" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1">総従業員数</p>
+                            <h3 class="mb-0">{{ total_employees }}</h3>
+                        </div>
+                        <div class="bg-info bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-people text-info" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 最近登録された企業 -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>最近登録された企業</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_companies %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>企業名</th>
+                                    <th>登録日</th>
+                                    <th>ステータス</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for company in recent_companies %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('saas_edit_company', company_id=company.id) }}" class="text-decoration-none">
+                                            {{ company.company_name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ company.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        {% if company.is_active %}
+                                        <span class="badge bg-success">アクティブ</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">停止中</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">登録された企業がありません</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 契約期限が近い企業 -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>契約期限が近い企業（30日以内）</h5>
+                </div>
+                <div class="card-body">
+                    {% if expiring_soon %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>企業名</th>
+                                    <th>プラン</th>
+                                    <th>期限</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contract in expiring_soon %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('saas_edit_company', company_id=contract.company.id) }}" class="text-decoration-none">
+                                            {{ contract.company.company_name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ contract.plan.display_name }}</td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark">
+                                            {{ contract.end_date.strftime('%Y-%m-%d') }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">期限が近い契約はありません</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- クイックアクション -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>クイックアクション</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url_for('saas_add_company') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>新規企業登録
+                        </a>
+                        <a href="{{ url_for('saas_companies') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-building me-1"></i>企業一覧
+                        </a>
+                        <a href="{{ url_for('saas_plans') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-card-list me-1"></i>プラン管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

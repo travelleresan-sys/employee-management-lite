@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}プラン管理 - Employee Management Lite{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-card-list me-2"></i>プラン管理</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for plan in plans %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 {% if not plan.is_active %}opacity-50{% endif %}">
+                <div class="card-header {% if plan.plan_name == 'standard' %}bg-primary bg-opacity-10 border-primary{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ plan.display_name }}</h5>
+                        {% if plan.is_active %}
+                        <span class="badge bg-success">有効</span>
+                        {% else %}
+                        <span class="badge bg-secondary">無効</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h2 class="text-primary mb-0">
+                            ¥{{ "{:,}".format(plan.monthly_fee) }}
+                            <small class="text-muted fs-6">/月</small>
+                        </h2>
+                        <div class="text-muted">
+                            ¥{{ "{:,}".format(plan.yearly_fee) }}/年
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-people text-primary me-2"></i>
+                            <strong>従業員上限:</strong> {{ plan.max_employees }}名
+                        </div>
+                    </div>
+
+                    {% if plan.description %}
+                    <div class="mb-3">
+                        <small class="text-muted">{{ plan.description }}</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-briefcase me-1"></i>
+                            利用企業数: {{ plan.contracts.filter_by(is_active=True).count() }}
+                        </small>
+                    </div>
+
+                    <div class="d-grid">
+                        <a href="{{ url_for('saas_edit_plan', plan_id=plan.id) }}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil me-1"></i>編集
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
